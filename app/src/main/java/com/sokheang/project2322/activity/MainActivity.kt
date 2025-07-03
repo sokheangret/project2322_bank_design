@@ -1,5 +1,6 @@
 package com.sokheang.project2322.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ import com.sokheang.project2322.viewmodel.ProfileViewModel
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    private lateinit var userProfile: Profile
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +28,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initPopular()
+
+        binding.layoutDetail.setOnClickListener {
+            val intent = Intent(this@MainActivity, OverviewActivity::class.java)
+
+            intent.putExtra("profile_data", userProfile)
+            startActivity(intent)
+        }
     }
 
     private fun initPopular() {
@@ -34,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         val viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
         viewModel.profileLiveData.observe(this) { profile ->
             if(profile != null) {
+                userProfile = profile
                 binding.scrollView.visibility = View.VISIBLE
                 binding.progressBar.visibility = View.GONE
                 binding.tvName.text = profile.profileName
